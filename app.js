@@ -241,3 +241,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+// Add this to your existing app.js file
+
+// Sound player setup
+const sounds = {
+    default: new Audio('/sounds/default.mp3'),
+    beep: new Audio('/sounds/beep.mp3'),
+    click: new Audio('/sounds/click.mp3'),
+    wood: new Audio('/sounds/wood.mp3'),
+    drum: new Audio('/sounds/drum.mp3')
+};
+
+// Preload all sounds
+for (const sound in sounds) {
+    sounds[sound].load();
+}
+
+// Listen for messages from the service worker
+navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data.action === 'PLAY_SOUND') {
+        const soundType = event.data.soundType || 'default';
+        
+        // Play the selected sound
+        if (sounds[soundType]) {
+            // Clone the audio to allow rapid repetition
+            sounds[soundType].cloneNode(true).play()
+                .catch(error => console.error('Failed to play sound:', error));
+        }
+    }
+});

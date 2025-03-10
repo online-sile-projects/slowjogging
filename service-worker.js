@@ -4,7 +4,12 @@ const ASSETS = [
     '/index.html',
     '/styles.css',
     '/app.js',
-    '/manifest.json'
+    '/manifest.json',
+    '/sounds/beep.mp3',
+    '/sounds/click.mp3',
+    '/sounds/wood.mp3',
+    '/sounds/drum.mp3',
+    '/sounds/default.mp3'
 ];
 
 // Audio worklet for background audio
@@ -52,17 +57,29 @@ self.addEventListener('message', event => {
     else if (event.data.action === 'STOP_AUDIO') {
         stopBackgroundAudio();
     }
+    else if (event.data.action === 'PLAY_SOUND') {
+        playSound(event.data.soundType);
+    }
 });
+
+// Function to play a specific sound
+function playSound(soundType) {
+    // Send a message back to the client to play the sound
+    self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+            client.postMessage({
+                action: 'PLAY_SOUND',
+                soundType: soundType
+            });
+        });
+    });
+}
 
 // Handle background audio
 function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
     // Stop any existing audio
     stopBackgroundAudio();
     
-    // Using Web Audio API would require audioWorklet which has limitations in service workers
-    // Instead, we use self.registration.showNotification to keep the service worker alive
-    
-    // Get the sound name for display
     const soundNames = {
         'default': '默認聲音',
         'beep': '嗶嗶聲',
@@ -82,6 +99,15 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
         silent: true,
         ongoing: true
     });
+    
+    // Calculate the interval between beats in milliseconds
+    const beatInterval = 60000 / tempo;
+    
+    // Start metronome
+    metronomeInterval = setInterval(() => {
+        // Play the selected sound
+        playSound(soundType);
+    }, beatInterval);
     
     // Use setTimeout for the timer countdown
     let remainingSeconds = remainingTime;
@@ -107,6 +133,11 @@ function stopBackgroundAudio() {
     if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
+    }
+    
+    if (metronomeInterval) {
+        clearInterval(metronomeInterval);
+        metronomeInterval = null;
     }
     
     // Close any active notifications
