@@ -47,7 +47,7 @@ self.addEventListener('fetch', event => {
 // Message event - handle background audio
 self.addEventListener('message', event => {
     if (event.data.action === 'START_AUDIO') {
-        startBackgroundAudio(event.data.tempo, event.data.remainingTime);
+        startBackgroundAudio(event.data.tempo, event.data.remainingTime, event.data.soundType);
     }
     else if (event.data.action === 'STOP_AUDIO') {
         stopBackgroundAudio();
@@ -55,16 +55,27 @@ self.addEventListener('message', event => {
 });
 
 // Handle background audio
-function startBackgroundAudio(tempo, remainingTime) {
+function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
     // Stop any existing audio
     stopBackgroundAudio();
     
     // Using Web Audio API would require audioWorklet which has limitations in service workers
     // Instead, we use self.registration.showNotification to keep the service worker alive
     
+    // Get the sound name for display
+    const soundNames = {
+        'default': '默認聲音',
+        'beep': '嗶嗶聲',
+        'click': '點擊聲',
+        'wood': '木魚聲',
+        'drum': '鼓聲'
+    };
+    
+    const soundName = soundNames[soundType] || soundNames.default;
+    
     // Show a persistent notification to keep the service worker active
     self.registration.showNotification('慢跑節拍器', {
-        body: `正在以 ${tempo} BPM 播放節拍`,
+        body: `正在以 ${tempo} BPM 播放${soundName}節拍`,
         icon: '/icon-192x192.png',
         tag: 'metronome',
         renotify: false,

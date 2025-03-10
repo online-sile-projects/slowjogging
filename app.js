@@ -166,4 +166,78 @@ tempoButtons.forEach(btn => {
 document.addEventListener('DOMContentLoaded', () => {
     updateTimer(30); // Default to 30 minutes
     updateTempo(180); // Default to 180 BPM
+
+    // Get elements
+    const startButton = document.getElementById('start-btn');
+    const stopButton = document.getElementById('stop-btn');
+    const tempoSlider = document.getElementById('tempo-slider');
+    const tempoValue = document.getElementById('tempo-value');
+    const minutesDisplay = document.getElementById('minutes');
+    const secondsDisplay = document.getElementById('seconds');
+    
+    // Sound selection elements
+    const soundOptions = document.querySelectorAll('input[name="sound-type"]');
+    
+    // Variables for timer and metronome
+    let timerRunning = false;
+    let remainingTime = 0;
+    let tempo = 150;
+    let soundType = 'default';
+    
+    // Handle sound selection
+    soundOptions.forEach(option => {
+        option.addEventListener('change', (e) => {
+            soundType = e.target.value;
+            console.log(`Sound changed to: ${soundType}`);
+            
+            // If metronome is running, restart it with new sound
+            if (timerRunning) {
+                stopMetronome();
+                startMetronome(tempo, remainingTime, soundType);
+            }
+        });
+    });
+    
+    // Start button handler
+    startButton.addEventListener('click', () => {
+        if (!timerRunning && remainingTime > 0) {
+            timerRunning = true;
+            startMetronome(tempo, remainingTime, soundType);
+        }
+    });
+    
+    // Stop button handler
+    stopButton.addEventListener('click', () => {
+        if (timerRunning) {
+            timerRunning = false;
+            stopMetronome();
+        }
+    });
+    
+    // Function to start metronome
+    function startMetronome(tempo, remainingTime, soundType) {
+        // Check if service worker is available
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                action: 'START_AUDIO',
+                tempo: tempo,
+                remainingTime: remainingTime,
+                soundType: soundType
+            });
+            
+            // ...existing code for local timer logic...
+        }
+    }
+    
+    // Function to stop metronome
+    function stopMetronome() {
+        // Check if service worker is available
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                action: 'STOP_AUDIO'
+            });
+            
+            // ...existing code for stopping local timer...
+        }
+    }
 });

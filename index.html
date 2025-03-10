@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>慢跑節拍器</title>
+    <title>超慢跑節拍器</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2196F3">
 </head>
 <body>
     <div class="container">
-        <h1>慢跑節拍器</h1>
+        <h1>超慢跑節拍器</h1>
         
         <div class="timer-section">
             <h2>計時器</h2>
@@ -28,15 +28,46 @@
         <div class="metronome-section">
             <h2>節拍速度 (BPM)</h2>
             <div class="tempo-container">
-                <input type="range" min="160" max="220" value="180" class="slider" id="tempo-slider">
+                <input type="range" min="120" max="180" value="150" class="slider" id="tempo-slider">
                 <div class="tempo-display">
-                    <span id="tempo-value">180</span> BPM
+                    <span id="tempo-value">150</span> BPM
                 </div>
                 <div class="tempo-buttons">
+                    <button class="tempo-btn" data-tempo="140">140</button>
+                    <button class="tempo-btn" data-tempo="150">150</button>
+                    <button class="tempo-btn" data-tempo="160">160</button>
+                    <button class="tempo-btn" data-tempo="170">170</button>
                     <button class="tempo-btn" data-tempo="180">180</button>
                     <button class="tempo-btn" data-tempo="190">190</button>
                     <button class="tempo-btn" data-tempo="200">200</button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Add sound selection section -->
+        <div class="sound-section">
+            <h2>節拍聲音</h2>
+            <div class="sound-options">
+                <label class="sound-option">
+                    <input type="radio" name="sound-type" value="default" checked>
+                    <span>默認聲音</span>
+                </label>
+                <label class="sound-option">
+                    <input type="radio" name="sound-type" value="beep">
+                    <span>嗶嗶聲</span>
+                </label>
+                <label class="sound-option">
+                    <input type="radio" name="sound-type" value="click">
+                    <span>點擊聲</span>
+                </label>
+                <label class="sound-option">
+                    <input type="radio" name="sound-type" value="wood">
+                    <span>木魚聲</span>
+                </label>
+                <label class="sound-option">
+                    <input type="radio" name="sound-type" value="drum">
+                    <span>鼓聲</span>
+                </label>
             </div>
         </div>
         

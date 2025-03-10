@@ -124,3 +124,42 @@ h2 {
 #stop-btn:hover {
     background-color: #d32f2f;
 }
+
+.sound-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.sound-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.sound-option {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 2px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.sound-option:hover {
+    border-color: #2196F3;
+}
+
+.sound-option input {
+    margin-right: 6px;
+}
+
+.sound-option input:checked + span {
+    font-weight: bold;
+    color: #2196F3;
+}
