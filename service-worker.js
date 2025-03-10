@@ -60,6 +60,9 @@ self.addEventListener('message', event => {
     else if (event.data.action === 'PLAY_SOUND') {
         playSound(event.data.soundType);
     }
+    else if (event.data.action === 'TOGGLE_PWA') {
+        togglePWA(event.data.enabled);
+    }
 });
 
 // Function to play a specific sound
@@ -145,4 +148,34 @@ function stopBackgroundAudio() {
         .then(notifications => {
             notifications.forEach(notification => notification.close());
         });
+}
+
+// Function to toggle PWA registration status
+function togglePWA(enabled) {
+    // Notify clients about the PWA status change
+    self.clients.matchAll().then(clients => {
+        clients.forEach(client => {
+            client.postMessage({
+                action: 'PWA_STATUS_CHANGED',
+                enabled: enabled
+            });
+        });
+    });
+    
+    // Show notification about PWA status
+    const statusText = enabled ? '已啟用' : '已停用';
+    self.registration.showNotification('慢跑節拍器', {
+        body: `PWA功能${statusText}`,
+        icon: '/images/icon-192x192.png',
+        tag: 'pwa-toggle',
+        requireInteraction: false
+    });
+    
+    // If PWA is disabled, unregister the service worker
+    if (!enabled) {
+        // Only notify, actual unregistration should be done from the client
+        console.log('Service Worker: PWA functionality disabled');
+    } else {
+        console.log('Service Worker: PWA functionality enabled');
+    }
 }

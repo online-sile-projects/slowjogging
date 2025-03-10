@@ -271,3 +271,98 @@ navigator.serviceWorker.addEventListener('message', event => {
         }
     }
 });
+
+// Get references to the new buttons
+const continueBtn = document.getElementById('continue-btn');
+const endBtn = document.getElementById('end-btn');
+const resultsSection = document.getElementById('results-section');
+const resultsContent = document.getElementById('results-content');
+
+// Variables to track exercise data
+let startTime = null;
+let totalExerciseTime = 0;
+let pauseTime = null;
+
+// Start button event listener
+document.getElementById('start-btn').addEventListener('click', function() {
+    startMetronome();
+    startTimer();
+    
+    this.classList.add('hidden');
+    document.getElementById('stop-btn').classList.remove('hidden');
+    
+    // Record start time
+    startTime = new Date();
+});
+
+// Stop button event listener
+document.getElementById('stop-btn').addEventListener('click', function() {
+    stopMetronome();
+    stopTimer();
+    
+    this.classList.add('hidden');
+    continueBtn.classList.remove('hidden');
+    endBtn.classList.remove('hidden');
+    
+    // Record pause time
+    pauseTime = new Date();
+});
+
+// Continue button event listener
+continueBtn.addEventListener('click', function() {
+    startMetronome();
+    startTimer();
+    
+    this.classList.add('hidden');
+    endBtn.classList.add('hidden');
+    document.getElementById('stop-btn').classList.remove('hidden');
+    
+    // Add paused time to total
+    if (pauseTime) {
+        const pauseDuration = (new Date() - pauseTime) / 1000; // in seconds
+        pauseTime = null;
+    }
+});
+
+// End button event listener
+endBtn.addEventListener('click', function() {
+    // Calculate total exercise time
+    let exerciseEndTime = pauseTime || new Date();
+    let totalTimeInSeconds = Math.floor((exerciseEndTime - startTime) / 1000);
+    
+    // Format results
+    let minutes = Math.floor(totalTimeInSeconds / 60);
+    let seconds = totalTimeInSeconds % 60;
+    let formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Display results
+    resultsContent.innerHTML = `
+        <p>運動總時間: ${formattedTime}</p>
+        <p>節拍速度: ${document.getElementById('tempo-value').textContent} BPM</p>
+    `;
+    
+    resultsSection.classList.remove('hidden');
+    continueBtn.classList.add('hidden');
+    endBtn.classList.add('hidden');
+    document.getElementById('start-btn').classList.remove('hidden');
+    
+    // Reset timer display
+    resetTimer();
+    
+    // Reset tracking variables
+    startTime = null;
+    totalExerciseTime = 0;
+    pauseTime = null;
+});
+
+// Function to reset the timer display
+function resetTimer() {
+    // Reset timer display to 00:00
+    document.getElementById('minutes').textContent = '00';
+    document.getElementById('seconds').textContent = '00';
+    
+    // Hide results when starting a new session
+    if (!resultsSection.classList.contains('hidden')) {
+        resultsSection.classList.add('hidden');
+    }
+}
