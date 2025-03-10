@@ -76,7 +76,7 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
     // Show a persistent notification to keep the service worker active
     self.registration.showNotification('慢跑節拍器', {
         body: `正在以 ${tempo} BPM 播放${soundName}節拍`,
-        icon: '/icon-192x192.png',
+        icon: '/images/icon-192x192.png',
         tag: 'metronome',
         renotify: false,
         silent: true,
@@ -94,7 +94,7 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
             // Show a final notification
             self.registration.showNotification('慢跑節拍器', {
                 body: '計時完成！',
-                icon: '/icon-192x192.png',
+                icon: '/images/icon-192x192.png',
                 tag: 'timer-complete',
                 vibrate: [200, 100, 200],
                 requireInteraction: true
