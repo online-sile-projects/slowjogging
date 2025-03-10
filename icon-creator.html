@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate PWA Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ddd; margin-top: 10px; }
+        button { padding: 10px 20px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>PWA Icon Generator</h1>
+    <p>Click the buttons below to generate and download the icons.</p>
+    
+    <div>
+        <button id="generate192">Generate 192x192 Icon</button>
+        <button id="generate512">Generate 512x512 Icon</button>
+    </div>
+    
+    <canvas id="iconCanvas" width="512" height="512"></canvas>
+    
+    <script>
+        function drawIcon(size) {
+            const canvas = document.getElementById('iconCanvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#2196F3';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Center circle
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/3, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Shoe symbol
+            ctx.fillStyle = '#0D47A1';
+            ctx.beginPath();
+            
+            // Draw a simple shoe shape
+            const shoeWidth = size * 0.4;
+            const shoeHeight = size * 0.2;
+            const x = size/2 - shoeWidth/2;
+            const y = size/2 - shoeHeight/2;
+            
+            ctx.moveTo(x, y + shoeHeight * 0.5);
+            ctx.lineTo(x + shoeWidth * 0.3, y);
+            ctx.lineTo(x + shoeWidth * 0.8, y);
+            ctx.lineTo(x + shoeWidth, y + shoeHeight * 0.3);
+            ctx.lineTo(x + shoeWidth, y + shoeHeight);
+            ctx.lineTo(x, y + shoeHeight);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        document.getElementById('generate192').addEventListener('click', () => drawIcon(192));
+        document.getElementById('generate512').addEventListener('click', () => drawIcon(512));
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>慢跑節拍器</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2196F3">
+</head>
+<body>
+    <div class="container">
+        <h1>慢跑節拍器</h1>
+        
+        <div class="timer-section">
+            <h2>計時器</h2>
+            <div class="time-display">
+                <span id="minutes">00</span>:<span id="seconds">00</span>
+            </div>
+            <div class="time-buttons">
+                <button class="time-btn" data-time="10">10分鐘</button>
+                <button class="time-btn" data-time="20">20分鐘</button>
+                <button class="time-btn" data-time="30">30分鐘</button>
+                <button class="time-btn" data-time="40">40分鐘</button>
+            </div>
+        </div>
+        
+        <div class="metronome-section">
+            <h2>節拍速度 (BPM)</h2>
+            <div class="tempo-container">
+                <input type="range" min="160" max="220" value="180" class="slider" id="tempo-slider">
+                <div class="tempo-display">
+                    <span id="tempo-value">180</span> BPM
+                </div>
+                <div class="tempo-buttons">
+                    <button class="tempo-btn" data-tempo="180">180</button>
+                    <button class="tempo-btn" data-tempo="190">190</button>
+                    <button class="tempo-btn" data-tempo="200">200</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="start-btn" class="control-btn">開始</button>
+            <button id="stop-btn" class="control-btn">停止</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('Service worker registered'))
+                .catch(err => console.log('Service worker error:', err));
+        }
+    </script>
+</body>
+</html>
