@@ -170,14 +170,16 @@ function resetTimer() {
     // Reset timer display to selected time
     updateTimer(selectedTimeInMinutes);
     
-    // Hide results when starting a new session
-    if (!resultsSection.classList.contains('hidden')) {
-        resultsSection.classList.add('hidden');
-    }
+    
 }
 
 // Event listeners
 startBtn.addEventListener('click', () => {
+    // Hide results when starting a new session
+    if (!resultsSection.classList.contains('hidden')) {
+        resultsSection.classList.add('hidden');
+    }
+    
     startAll();
 });
 
@@ -196,6 +198,9 @@ continueBtn.addEventListener('click', () => {
 });
 
 endBtn.addEventListener('click', () => {
+    // Make sure to remove the hidden class from the results section
+    resultsSection.classList.remove('hidden');
+    
     // Calculate total exercise time
     let exerciseEndTime = pauseTime || new Date();
     let totalTimeInSeconds = Math.floor((exerciseEndTime - startTime) / 1000);
@@ -215,8 +220,6 @@ endBtn.addEventListener('click', () => {
         <p>使用的聲音: ${selectedSoundType}</p>
     `;
     
-    // Make sure to remove the hidden class from the results section
-    resultsSection.classList.remove('hidden');
     
     // Log to verify execution
     console.log("Results displayed:", resultsContent.innerHTML);

@@ -168,7 +168,7 @@ h2 {
     display: none !important;
 }
 
-.results-section {
+/* .results-section {
     margin-top: 20px;
     padding: 15px;
     background-color: #f5f5f5;
@@ -176,18 +176,13 @@ h2 {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     border-top: 1px solid #ddd;
     text-align: center;
-}
+} */
 
-.results-section:not(.hidden) {
-    display: block;
-    animation: fadeIn 0.5s;
-}
-
-.results-content {
+/* .results-content {
     margin-top: 10px;
     font-size: 1.1em;
     line-height: 1.5;
-}
+} */
 
 @keyframes fadeIn {
     from { opacity: 0; }
