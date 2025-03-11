@@ -152,6 +152,34 @@ navigator.serviceWorker.addEventListener('message', (event) => {
     }
 });
 
+// Add this code to your app.js file where appropriate
+
+// Listen for messages from the service worker
+navigator.serviceWorker.addEventListener('message', function(event) {
+    if (event.data && event.data.action === 'TIMER_COMPLETE') {
+        // Timer has completed, show results section
+        const resultsSection = document.getElementById('results-section');
+        if (resultsSection) {
+            resultsSection.style.display = 'block';
+        }
+        
+        // Automatically stop the timer UI if there's a stop button
+        const stopButton = document.getElementById('stop-button');
+        if (stopButton) {
+            stopButton.click();
+        }
+        
+        // Or call the function that handles stopping directly
+        // stopTimer(); // Uncomment and use this if you have a function for stopping the timer
+        
+        // Show a message to the user
+        const messageElement = document.getElementById('completion-message');
+        if (messageElement) {
+            messageElement.textContent = '計時完成！';
+        }
+    }
+});
+
 // Event listeners
 startBtn.addEventListener('click', () => {
     // Hide results when starting a new session

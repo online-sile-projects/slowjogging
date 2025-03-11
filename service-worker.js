@@ -198,6 +198,16 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
                 vibrate: [200, 100, 200],
                 requireInteraction: true
             });
+            
+            // Send message to client that timer has ended
+            self.clients.matchAll().then(clients => {
+                clients.forEach(client => {
+                    client.postMessage({
+                        action: 'TIMER_COMPLETE',
+                        message: '計時完成！'
+                    });
+                });
+            });
         }
     }, 1000);
 }
