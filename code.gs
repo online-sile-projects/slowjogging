@@ -11,10 +11,10 @@ function doGet(e) {
   try {
     if (action === 'saveUser') {
       return saveUser(e);
-    } else if (action === 'saveRecord') {
-      return saveWeightRecord(e);
-    } else if (action === 'getHistory') {
-      return getWeightHistory(e);
+    } else if (action === 'saveExercise') {
+      return saveExerciseRecord(e);
+    } else if (action === 'getExerciseHistory') {
+      return getExerciseHistory(e);
     } else {
       return ContentService.createTextOutput(JSON.stringify({
         success: false,
@@ -81,18 +81,20 @@ function createUserSheet(userId, ss) {
   
   if (!userSheet) {
     userSheet = ss.insertSheet(userId);
-    userSheet.appendRow(['日期', '運動總時間 (分鐘)']);
+    userSheet.appendRow(['日期', '運動總時間 (分鐘)', '節拍']);
   }
   
   return userSheet;
 }
 
 // Save exercise record
-function saveWeightRecord(e) {
+function saveExerciseRecord(e) {
   const userId = e.parameter.userId;
-  const exerciseTime = e.parameter.exerciseTime;
+  const duration = e.parameter.duration;
+  const tempo = e.parameter.tempo;
+  const date = e.parameter.date;
   
-  if (!userId || !exerciseTime) {
+  if (!userId || !duration) {
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: 'Missing required parameters'
@@ -108,16 +110,16 @@ function saveWeightRecord(e) {
   }
   
   // Add new exercise record
-  const now = new Date().toISOString();
-  userSheet.appendRow([now, exerciseTime]);
+  const recordDate = date ? new Date(date) : new Date();
+  userSheet.appendRow([recordDate.toISOString(), duration, tempo]);
   
   return ContentService.createTextOutput(JSON.stringify({
     success: true
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
-// Get weight history for a user
-function getWeightHistory(e) {
+// Get exercise history for a user
+function getExerciseHistory(e) {
   const userId = e.parameter.userId;
   
   if (!userId) {
