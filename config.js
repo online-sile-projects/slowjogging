@@ -1,4 +1,4 @@
-x/**
+/**
  * Configuration file for the Slow Jogging app
  */
 
