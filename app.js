@@ -198,6 +198,10 @@ continueBtn.addEventListener('click', () => {
 });
 
 endBtn.addEventListener('click', () => {
+    isRunning = false;
+    clearInterval(metronomeInterval);
+    clearInterval(timerInterval);
+    
     // Make sure to remove the hidden class from the results section
     resultsSection.classList.remove('hidden');
     
