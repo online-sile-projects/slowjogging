@@ -16,6 +16,8 @@ const ASSETS = [
 let audioContext = null;
 let metronomeInterval = null;
 let timerInterval = null;
+let oscillator = null;
+let gainNode = null;
 
 // Install event - cache assets
 self.addEventListener('install', event => {
@@ -80,25 +82,81 @@ function playSound(soundType) {
     // Don't play sounds unless explicitly called with a valid sound type
     if (!soundType) return;
     
-    // Send a message back to the client to play the sound
-    self.clients.matchAll().then(clients => {
-        clients.forEach(client => {
-            client.postMessage({
-                action: 'PLAY_SOUND',
-                soundType: soundType,
-                fromServiceWorker: true // 添加标记表明这个消息来自service worker
-            });
-        });
-    });
+    // Create sound with Web Audio API instead of sending message
+    generateSound(soundType);
 }
 
-// Handle background audio
+// Function to generate sound with Web Audio API
+function generateSound(soundType) {
+    // Create audio context if it doesn't exist
+    if (!audioContext) {
+        audioContext = new AudioContext();
+    }
+    
+    // Create oscillator and gain node
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    
+    // Configure sound based on type
+    switch (soundType) {
+        case 'beep':
+            osc.type = 'sine';
+            osc.frequency.value = 880; // A5
+            gain.gain.value = 0.5;
+            break;
+        case 'click':
+            osc.type = 'triangle';
+            osc.frequency.value = 1200;
+            gain.gain.value = 0.3;
+            break;
+        case 'wood':
+            osc.type = 'triangle';
+            osc.frequency.value = 600;
+            gain.gain.value = 0.6;
+            break;
+        case 'drum':
+            osc.type = 'square';
+            osc.frequency.value = 150;
+            gain.gain.value = 0.7;
+            break;
+        default:
+            osc.type = 'sine';
+            osc.frequency.value = 440; // A4
+            gain.gain.value = 0.5;
+    }
+    
+    // Connect nodes
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    
+    // Play sound with envelope
+    const now = audioContext.currentTime;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(gain.gain.value, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+    
+    // Start and stop oscillator
+    osc.start(now);
+    osc.stop(now + 0.1);
+    
+    // Clean up after sound is played
+    osc.onended = () => {
+        osc.disconnect();
+        gain.disconnect();
+    };
+}
+
 function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
     // Validate parameters to prevent unexpected audio playback
     if (!tempo || !remainingTime) return;
     
     // Stop any existing audio
     stopBackgroundAudio();
+    
+    // Create audio context if it doesn't exist
+    if (!audioContext) {
+        audioContext = new AudioContext();
+    }
     
     const soundNames = {
         'default': '默認聲音',
@@ -125,8 +183,8 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
     
     // Start metronome
     metronomeInterval = setInterval(() => {
-        // Play the selected sound
-        playSound(soundType);
+        // Generate sound directly with Web Audio API
+        generateSound(soundType);
     }, beatInterval);
     
     // Use setTimeout for the timer countdown
@@ -158,6 +216,13 @@ function stopBackgroundAudio() {
     if (metronomeInterval) {
         clearInterval(metronomeInterval);
         metronomeInterval = null;
+    }
+    
+    // Clean up audio resources
+    if (audioContext) {
+        audioContext.close().then(() => {
+            audioContext = null;
+        });
     }
     
     // Close any active notifications
