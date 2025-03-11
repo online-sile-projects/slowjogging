@@ -10,12 +10,21 @@ let selectedTimeInMinutes = 30;
 // DOM elements
 const startBtn = document.getElementById('start-btn');
 const stopBtn = document.getElementById('stop-btn');
+const continueBtn = document.getElementById('continue-btn');
+const endBtn = document.getElementById('end-btn');
+const resultsSection = document.getElementById('results-section');
+const resultsContent = document.getElementById('results-content');
 const tempoSlider = document.getElementById('tempo-slider');
 const tempoValueDisplay = document.getElementById('tempo-value');
 const minutesDisplay = document.getElementById('minutes');
 const secondsDisplay = document.getElementById('seconds');
 const timeButtons = document.querySelectorAll('.time-btn');
 const tempoButtons = document.querySelectorAll('.tempo-btn');
+
+// Variables to track exercise data
+let startTime = null;
+let totalExerciseTime = 0;
+let pauseTime = null;
 
 // Initialize Web Audio API
 function initAudio() {
@@ -113,6 +122,17 @@ function startAll() {
     startMetronome();
     startTimer();
     
+    // Record start time if it's not already set
+    if (!startTime) {
+        startTime = new Date();
+    }
+    
+    // Show/hide appropriate buttons
+    startBtn.classList.add('hidden');
+    stopBtn.classList.remove('hidden');
+    continueBtn.classList.add('hidden');
+    endBtn.classList.add('hidden');
+    
     // Notify service worker to keep audio playing in the background
     if (navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({
@@ -129,11 +149,30 @@ function stopAll() {
     clearInterval(metronomeInterval);
     clearInterval(timerInterval);
     
+    // Record pause time
+    pauseTime = new Date();
+    
+    // Show/hide appropriate buttons
+    stopBtn.classList.add('hidden');
+    continueBtn.classList.remove('hidden');
+    endBtn.classList.remove('hidden');
+    
     // Notify service worker to stop background audio
     if (navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller.postMessage({
             action: 'STOP_AUDIO'
         });
+    }
+}
+
+// Function to reset the timer display
+function resetTimer() {
+    // Reset timer display to selected time
+    updateTimer(selectedTimeInMinutes);
+    
+    // Hide results when starting a new session
+    if (!resultsSection.classList.contains('hidden')) {
+        resultsSection.classList.add('hidden');
     }
 }
 
@@ -144,6 +183,56 @@ startBtn.addEventListener('click', () => {
 
 stopBtn.addEventListener('click', () => {
     stopAll();
+});
+
+continueBtn.addEventListener('click', () => {
+    // Add paused time to total
+    if (pauseTime) {
+        const pauseDuration = (new Date() - pauseTime) / 1000; // in seconds
+        pauseTime = null;
+    }
+    
+    startAll();
+});
+
+endBtn.addEventListener('click', () => {
+    // Calculate total exercise time
+    let exerciseEndTime = pauseTime || new Date();
+    let totalTimeInSeconds = Math.floor((exerciseEndTime - startTime) / 1000);
+    
+    // Format results
+    let minutes = Math.floor(totalTimeInSeconds / 60);
+    let seconds = totalTimeInSeconds % 60;
+    let formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Get the selected sound type
+    const selectedSoundType = document.querySelector('input[name="sound-type"]:checked').value;
+    
+    // Display results
+    resultsContent.innerHTML = `
+        <p>運動總時間: ${formattedTime}</p>
+        <p>節拍速度: ${tempoValue} BPM</p>
+        <p>使用的聲音: ${selectedSoundType}</p>
+    `;
+    
+    // Make sure to remove the hidden class from the results section
+    resultsSection.classList.remove('hidden');
+    
+    // Log to verify execution
+    console.log("Results displayed:", resultsContent.innerHTML);
+    
+    // UI updates
+    continueBtn.classList.add('hidden');
+    endBtn.classList.add('hidden');
+    startBtn.classList.remove('hidden');
+    
+    // Reset timer display
+    resetTimer();
+    
+    // Reset tracking variables
+    startTime = null;
+    totalExerciseTime = 0;
+    pauseTime = null;
 });
 
 tempoSlider.addEventListener('input', (e) => {
@@ -162,95 +251,13 @@ tempoButtons.forEach(btn => {
     });
 });
 
-// Initialize with default values
-document.addEventListener('DOMContentLoaded', () => {
-    updateTimer(30); // Default to 30 minutes
-    updateTempo(180); // Default to 180 BPM
-
-    // Get elements
-    const startButton = document.getElementById('start-btn');
-    const stopButton = document.getElementById('stop-btn');
-    const tempoSlider = document.getElementById('tempo-slider');
-    const tempoValue = document.getElementById('tempo-value');
-    const minutesDisplay = document.getElementById('minutes');
-    const secondsDisplay = document.getElementById('seconds');
-    
-    // Sound selection elements
-    const soundOptions = document.querySelectorAll('input[name="sound-type"]');
-    
-    // Variables for timer and metronome
-    let timerRunning = false;
-    let remainingTime = 0;
-    let tempo = 150;
-    let soundType = 'default';
-    
-    // Handle sound selection
-    soundOptions.forEach(option => {
-        option.addEventListener('change', (e) => {
-            soundType = e.target.value;
-            console.log(`Sound changed to: ${soundType}`);
-            
-            // If metronome is running, restart it with new sound
-            if (timerRunning) {
-                stopMetronome();
-                startMetronome(tempo, remainingTime, soundType);
-            }
-        });
-    });
-    
-    // Start button handler
-    startButton.addEventListener('click', () => {
-        if (!timerRunning && remainingTime > 0) {
-            timerRunning = true;
-            startMetronome(tempo, remainingTime, soundType);
-        }
-    });
-    
-    // Stop button handler
-    stopButton.addEventListener('click', () => {
-        if (timerRunning) {
-            timerRunning = false;
-            stopMetronome();
-        }
-    });
-    
-    // Function to start metronome
-    function startMetronome(tempo, remainingTime, soundType) {
-        // Check if service worker is available
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-                action: 'START_AUDIO',
-                tempo: tempo,
-                remainingTime: remainingTime,
-                soundType: soundType
-            });
-            
-            // ...existing code for local timer logic...
-        }
-    }
-    
-    // Function to stop metronome
-    function stopMetronome() {
-        // Check if service worker is available
-        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-                action: 'STOP_AUDIO'
-            });
-            
-            // ...existing code for stopping local timer...
-        }
-    }
-});
-
-// Add this to your existing app.js file
-
 // Sound player setup
 const sounds = {
-    default: new Audio('/sounds/default.mp3'),
-    beep: new Audio('/sounds/beep.mp3'),
-    click: new Audio('/sounds/click.mp3'),
-    wood: new Audio('/sounds/wood.mp3'),
-    drum: new Audio('/sounds/drum.mp3')
+    default: new Audio('./sounds/default.mp3'),
+    beep: new Audio('./sounds/beep.mp3'),
+    click: new Audio('./sounds/click.mp3'),
+    wood: new Audio('./sounds/wood.mp3'),
+    drum: new Audio('./sounds/drum.mp3')
 };
 
 // Preload all sounds
@@ -272,97 +279,19 @@ navigator.serviceWorker.addEventListener('message', event => {
     }
 });
 
-// Get references to the new buttons
-const continueBtn = document.getElementById('continue-btn');
-const endBtn = document.getElementById('end-btn');
-const resultsSection = document.getElementById('results-section');
-const resultsContent = document.getElementById('results-content');
-
-// Variables to track exercise data
-let startTime = null;
-let totalExerciseTime = 0;
-let pauseTime = null;
-
-// Start button event listener
-document.getElementById('start-btn').addEventListener('click', function() {
-    startMetronome();
-    startTimer();
+// Initialize with default values
+document.addEventListener('DOMContentLoaded', () => {
+    updateTimer(30); // Default to 30 minutes
+    updateTempo(180); // Default to 180 BPM
     
-    this.classList.add('hidden');
-    document.getElementById('stop-btn').classList.remove('hidden');
-    
-    // Record start time
-    startTime = new Date();
-});
-
-// Stop button event listener
-document.getElementById('stop-btn').addEventListener('click', function() {
-    stopMetronome();
-    stopTimer();
-    
-    this.classList.add('hidden');
-    continueBtn.classList.remove('hidden');
-    endBtn.classList.remove('hidden');
-    
-    // Record pause time
-    pauseTime = new Date();
-});
-
-// Continue button event listener
-continueBtn.addEventListener('click', function() {
-    startMetronome();
-    startTimer();
-    
-    this.classList.add('hidden');
-    endBtn.classList.add('hidden');
-    document.getElementById('stop-btn').classList.remove('hidden');
-    
-    // Add paused time to total
-    if (pauseTime) {
-        const pauseDuration = (new Date() - pauseTime) / 1000; // in seconds
-        pauseTime = null;
-    }
-});
-
-// End button event listener
-endBtn.addEventListener('click', function() {
-    // Calculate total exercise time
-    let exerciseEndTime = pauseTime || new Date();
-    let totalTimeInSeconds = Math.floor((exerciseEndTime - startTime) / 1000);
-    
-    // Format results
-    let minutes = Math.floor(totalTimeInSeconds / 60);
-    let seconds = totalTimeInSeconds % 60;
-    let formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
-    // Display results
-    resultsContent.innerHTML = `
-        <p>運動總時間: ${formattedTime}</p>
-        <p>節拍速度: ${document.getElementById('tempo-value').textContent} BPM</p>
-    `;
-    
-    resultsSection.classList.remove('hidden');
+    // Make sure buttons are in correct state on page load
+    startBtn.classList.remove('hidden');
+    stopBtn.classList.add('hidden');
     continueBtn.classList.add('hidden');
     endBtn.classList.add('hidden');
-    document.getElementById('start-btn').classList.remove('hidden');
+    resultsSection.classList.add('hidden');
     
-    // Reset timer display
-    resetTimer();
-    
-    // Reset tracking variables
-    startTime = null;
-    totalExerciseTime = 0;
-    pauseTime = null;
+    // Debug check to verify elements are properly selected
+    console.log("Results section element:", resultsSection);
+    console.log("Results content element:", resultsContent);
 });
-
-// Function to reset the timer display
-function resetTimer() {
-    // Reset timer display to 00:00
-    document.getElementById('minutes').textContent = '00';
-    document.getElementById('seconds').textContent = '00';
-    
-    // Hide results when starting a new session
-    if (!resultsSection.classList.contains('hidden')) {
-        resultsSection.classList.add('hidden');
-    }
-}
