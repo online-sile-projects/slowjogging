@@ -59,6 +59,9 @@ function setupLoginButton() {
                 loginButton.textContent = '登出';
                 document.getElementById('login-status').textContent = '已登入';
                 
+                // Save user to master sheet
+                await saveUserToMasterSheet(lineUserProfile);
+                
                 // 觸發登錄狀態改變事件
                 triggerLoginStatusChanged();
             } catch (error) {
