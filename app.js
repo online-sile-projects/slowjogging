@@ -202,6 +202,13 @@ endBtn.addEventListener('click', () => {
     clearInterval(metronomeInterval);
     clearInterval(timerInterval);
     
+    // Notify service worker to stop background audio
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            action: 'STOP_AUDIO'
+        });
+    }
+
     // Make sure to remove the hidden class from the results section
     resultsSection.classList.remove('hidden');
     
