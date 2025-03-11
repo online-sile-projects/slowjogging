@@ -52,13 +52,19 @@ self.addEventListener('fetch', event => {
 // Message event - handle background audio
 self.addEventListener('message', event => {
     if (event.data.action === 'START_AUDIO') {
-        startBackgroundAudio(event.data.tempo, event.data.remainingTime, event.data.soundType);
+        // Only start audio when explicitly requested
+        if (event.data.tempo && event.data.remainingTime) {
+            startBackgroundAudio(event.data.tempo, event.data.remainingTime, event.data.soundType);
+        }
     }
     else if (event.data.action === 'STOP_AUDIO') {
         stopBackgroundAudio();
     }
     else if (event.data.action === 'PLAY_SOUND') {
-        playSound(event.data.soundType);
+        // Only play sound when explicitly requested
+        if (event.data.soundType) {
+            playSound(event.data.soundType);
+        }
     }
     else if (event.data.action === 'TOGGLE_PWA') {
         togglePWA(event.data.enabled);
@@ -67,6 +73,9 @@ self.addEventListener('message', event => {
 
 // Function to play a specific sound
 function playSound(soundType) {
+    // Don't play sounds unless explicitly called with a valid sound type
+    if (!soundType) return;
+    
     // Send a message back to the client to play the sound
     self.clients.matchAll().then(clients => {
         clients.forEach(client => {
@@ -80,6 +89,9 @@ function playSound(soundType) {
 
 // Handle background audio
 function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
+    // Validate parameters to prevent unexpected audio playback
+    if (!tempo || !remainingTime) return;
+    
     // Stop any existing audio
     stopBackgroundAudio();
     
