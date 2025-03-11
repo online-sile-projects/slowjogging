@@ -18,10 +18,22 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="超慢跑節拍器">
+
+    <!-- 添加 Line SDK -->
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>超慢跑節拍器</h1>
+        
+        <!-- Line 登入按鈕和用戶資料 -->
+        <div class="user-section">
+            <div class="login-container">
+                <button id="line-login-btn" class="line-login-btn">使用 Line 登入</button>
+                <span id="login-status" class="login-status">未登入</span>
+            </div>
+            <div id="user-profile" class="user-profile"></div>
+        </div>
         
         <div class="timer-section">
             <h2>計時器</h2>
@@ -94,11 +106,21 @@
             <h2>運動結果</h2>
             <div id="results-content" class="results-content">
                 <!-- Results will be displayed here -->
-                 456
+            </div>
+            <!-- 添加歷史記錄區域 -->
+            <div class="history-container">
+                <h3>歷史記錄</h3>
+                <div id="history-list" class="history-list">
+                    <!-- 歷史記錄將顯示在這裡 -->
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- 添加配置文件 -->
+    <script src="config.js"></script>
+    <script src="line-auth.js"></script>
+    <script src="google-sheets.js"></script>
     <script src="app.js"></script>
     <script>
         // Register service worker for PWA
