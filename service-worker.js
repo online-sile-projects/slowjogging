@@ -52,6 +52,8 @@ self.addEventListener('fetch', event => {
 // Message event - handle background audio
 self.addEventListener('message', event => {
     if (event.data.action === 'START_AUDIO') {
+        // START_AUDIO: 啟動節拍器，定期播放聲音
+        // 根據設定的節拍(tempo)，會重複播放聲音直到計時結束
         // Only start audio when explicitly requested
         if (event.data.tempo && event.data.remainingTime) {
             startBackgroundAudio(event.data.tempo, event.data.remainingTime, event.data.soundType);
@@ -61,8 +63,10 @@ self.addEventListener('message', event => {
         stopBackgroundAudio();
     }
     else if (event.data.action === 'PLAY_SOUND') {
+        // PLAY_SOUND: 只播放單一次聲音
+        // 與START_AUDIO不同，這裡只會播放一次聲音，不會重複播放
         // Only play sound when explicitly requested
-        if (event.data.soundType) {
+        if (event.data.soundType && !event.data.fromServiceWorker) { // 檢查消息不是來自service worker
             playSound(event.data.soundType);
         }
     }
@@ -81,7 +85,8 @@ function playSound(soundType) {
         clients.forEach(client => {
             client.postMessage({
                 action: 'PLAY_SOUND',
-                soundType: soundType
+                soundType: soundType,
+                fromServiceWorker: true // 添加标记表明这个消息来自service worker
             });
         });
     });
@@ -133,7 +138,7 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
             stopBackgroundAudio();
             
             // Show a final notification
-            self.registration.showNotification('慢跑節拍器', {
+            self.registration.showNotification('超慢跑節拍器', {
                 body: '計時完成！',
                 icon: '/images/icon-192x192.png',
                 tag: 'timer-complete',
