@@ -1,7 +1,7 @@
 {
-  "name": "慢跑節拍器",
-  "short_name": "慢跑節拍器",
-  "description": "慢跑節拍器應用程式，可調整倒數時間和節拍速度",
+  "name": "超慢跑節拍器",
+  "short_name": "超慢跑節拍器",
+  "description": "超慢跑節拍器應用程式，可調整倒數時間和節拍速度",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -17,5 +17,6 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "permissions": ["notifications"]
 }
