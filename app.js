@@ -33,23 +33,23 @@ function initAudio() {
 
 // Create a beep sound
 function playBeep() {
-    if (!audioContext) {
-        initAudio();
-    }
+    // if (!audioContext) {
+    //     initAudio();
+    // }
     
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
+    // const oscillator = audioContext.createOscillator();
+    // const gainNode = audioContext.createGain();
     
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
+    // oscillator.connect(gainNode);
+    // gainNode.connect(audioContext.destination);
     
-    oscillator.type = 'sine';
-    oscillator.frequency.value = 800;
-    gainNode.gain.value = 0.5;
+    // oscillator.type = 'sine';
+    // oscillator.frequency.value = 800;
+    // gainNode.gain.value = 0.5;
     
-    oscillator.start();
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
-    oscillator.stop(audioContext.currentTime + 0.1);
+    // oscillator.start();
+    // gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+    // oscillator.stop(audioContext.currentTime + 0.1);
 }
 
 // Update metronome tempo
@@ -66,7 +66,7 @@ function updateTempo(tempo) {
     // Restart metronome if it's running
     if (isRunning) {
         clearInterval(metronomeInterval);
-        startMetronome();
+        // startMetronome();
     }
 }
 
@@ -512,8 +512,8 @@ document.addEventListener('DOMContentLoaded', function() {
         continueBtn.classList.add('hidden');
         
         // Start metronome and timer
-        startMetronome();
-        startTimer();
+        // startMetronome();
+        // startTimer();
     }
     
     // Pause workout
@@ -538,8 +538,8 @@ document.addEventListener('DOMContentLoaded', function() {
         stopBtn.classList.remove('hidden');
         
         // Restart metronome and timer
-        startMetronome();
-        startTimer();
+        // startMetronome();
+        // startTimer();
     }
     
     // End workout

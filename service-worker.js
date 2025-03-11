@@ -4,12 +4,7 @@ const ASSETS = [
     '/index.html',
     '/styles.css',
     '/app.js',
-    '/manifest.json',
-    '/sounds/beep.mp3',
-    '/sounds/click.mp3',
-    '/sounds/wood.mp3',
-    '/sounds/drum.mp3',
-    '/sounds/default.mp3'
+    '/manifest.json'
 ];
 
 // Audio worklet for background audio
@@ -90,7 +85,7 @@ function playSound(soundType) {
 function generateSound(soundType) {
     // Create audio context if it doesn't exist
     if (!audioContext) {
-        audioContext = new AudioContext();
+        audioContext = new self.AudioContext();
     }
     
     // Create oscillator and gain node
@@ -155,7 +150,7 @@ function startBackgroundAudio(tempo, remainingTime, soundType = 'default') {
     
     // Create audio context if it doesn't exist
     if (!audioContext) {
-        audioContext = new AudioContext();
+        audioContext = new self.AudioContext();
     }
     
     const soundNames = {
