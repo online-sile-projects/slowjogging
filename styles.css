@@ -46,8 +46,10 @@ h2 {
 
 .time-buttons, .tempo-buttons {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     margin: 20px 0;
+    gap: 10px;
 }
 
 .time-btn, .tempo-btn {
@@ -56,9 +58,14 @@ h2 {
     border: 1px solid #bbdefb;
     border-radius: 4px;
     cursor: pointer;
-    flex-grow: 1;
-    margin: 0 5px;
+    flex: 1 1 auto;
+    min-width: calc(25% - 10px);
+    margin: 0;
     transition: background-color 0.3s;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .time-btn:hover, .tempo-btn:hover {
