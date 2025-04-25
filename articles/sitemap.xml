@@ -2,13 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://slowjoggingapp.com/articles/index.html</loc>
-        <lastmod>2025-04-24</lastmod>
+        <lastmod>2025-04-25</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
+        <loc>https://slowjoggingapp.com/articles/2025-04-25-01-38-09-近期健康與生活新聞綜述：超慢跑、醫療新知與生活趨勢.html</loc>
+        <lastmod>2025-04-25-01-38-09</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
         <loc>https://slowjoggingapp.com/articles/2025-04-24-01-37-28-超慢跑風潮與健康生活新趨勢.html</loc>
-        <lastmod>2025-04-24-01-37-28</lastmod>
+        <lastmod>2025-04-24-01-37</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
