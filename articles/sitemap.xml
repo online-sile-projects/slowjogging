@@ -2,13 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://slowjoggingapp.com/articles/index.html</loc>
-        <lastmod>2025-05-29</lastmod>
+        <lastmod>2025-05-30</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
+        <loc>https://slowjoggingapp.com/articles/2025-05-30-01-39-28-新聞摘要與分析：聚焦虎頭埤阿勃勒花季及相關議題.html</loc>
+        <lastmod>2025-05-30-01-39-28</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
         <loc>https://slowjoggingapp.com/articles/2025-05-29-01-41-23-今日新聞摘要：川普關稅戰、樂齡生活、柯文哲案件與超慢跑風潮.html</loc>
-        <lastmod>2025-05-29-01-41-23</lastmod>
+        <lastmod>2025-05-29-01-41</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
